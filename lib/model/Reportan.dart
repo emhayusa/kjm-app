@@ -3,20 +3,24 @@ import 'package:kjm_app/model/lokasi.dart';
 import 'package:kjm_app/model/reporter.dart';
 
 class Reportan {
-  int id;
   String uuid;
-  String description;
-  String? penanganan;
+  //String? description;
+  //String? penanganan;
+  String kronologi;
+  String tindakan;
+  String hasil;
   DateTime createdAt;
   ReportType reportType;
   Lokasi lokasi;
   Reporter user;
 
   Reportan({
-    required this.id,
     required this.uuid,
-    required this.description,
-    this.penanganan,
+    //this.description,
+    //this.penanganan,
+    required this.kronologi,
+    required this.tindakan,
+    required this.hasil,
     required this.createdAt,
     required this.reportType,
     required this.lokasi,
@@ -24,10 +28,12 @@ class Reportan {
   });
 
   factory Reportan.fromJson(Map<String, dynamic> json) => Reportan(
-        id: json["id"],
         uuid: json["uuid"],
-        description: json["description"],
-        penanganan: json["penanganan"],
+        //description: json["description"],
+        //penanganan: json["penanganan"],
+        kronologi: json["kronologi"],
+        tindakan: json["tindakan"],
+        hasil: json["hasil"],
         createdAt: DateTime.parse(json["createdAt"]),
         reportType: ReportType.fromJson(json["reportType"]),
         lokasi: Lokasi.fromJson(json["lokasi"]),
@@ -35,10 +41,12 @@ class Reportan {
       );
 
   Map<String, dynamic> toJson() => {
-        "id": id,
         "uuid": uuid,
-        "description": description,
-        "penanganan": penanganan,
+        //"description": description,
+        //"penanganan": penanganan,
+        "kronologi": kronologi,
+        "tindakan": tindakan,
+        "hasil": hasil,
         "createdAt": createdAt.toIso8601String(),
         "reportType": reportType.toJson(),
         "lokasi": lokasi.toJson(),

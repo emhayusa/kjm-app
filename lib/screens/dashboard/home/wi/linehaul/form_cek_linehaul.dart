@@ -22,6 +22,7 @@ class _FormCekLinehaulState extends State<FormCekLinehaul> {
   XFile? _image;
   bool _isUploading = false;
   bool isLoading = false;
+  double _uploadProgress = 0.0;
 
   String _selectedOption1 = "";
 
@@ -35,17 +36,21 @@ class _FormCekLinehaulState extends State<FormCekLinehaul> {
   //TextEditingController _temuanController = TextEditingController();
   TextEditingController _vendorController = TextEditingController();
   //TextEditingController _petugasController = TextEditingController();
-  //TextEditingController _jenis_kendaraanController = TextEditingController();
-  //TextEditingController _asalController = TextEditingController();
+  TextEditingController _jenis_kendaraanController = TextEditingController();
+  TextEditingController _asalController = TextEditingController();
   TextEditingController _no_sealController = TextEditingController();
+
+  TextEditingController _no_surat_jalanController = TextEditingController();
   TextEditingController _waktu_start_asalController = TextEditingController();
   TextEditingController _waktu_tibaController = TextEditingController();
+  TextEditingController _waktu_tujuanController = TextEditingController();
+
   TextEditingController _tujuanController = TextEditingController();
 
   TextEditingController _noPolisiController = TextEditingController();
   TextEditingController _noSuratController = TextEditingController();
   TextEditingController _namaSopirController = TextEditingController();
-  String apiUrl = 'https://satukomando.id/api-prod/cek-box/';
+  String apiUrl = 'https://satukomando.id/api-prod/linehaul/';
   String apiUrlView = 'https://satukomando.id/api-prod/warehouse-type/';
 
   @override
@@ -132,7 +137,7 @@ class _FormCekLinehaulState extends State<FormCekLinehaul> {
     }
   }
 */
-  Future<void> _uploadData() async {
+  Future<void> _uploadDataOld() async {
     //String apiUrl = 'https://geoportal.big.go.id/api-dev/file/upload';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -267,6 +272,126 @@ class _FormCekLinehaulState extends State<FormCekLinehaul> {
           backgroundColor: Colors.red,
         ),
       );
+    }
+
+    //Navigator.of(context).pop();
+  }
+
+  Future<void> _uploadData() async {
+    //String apiUrl = 'https://geoportal.big.go.id/api-dev/file/upload';
+    String apiUrl = 'https://satukomando.id/api-prod/linehaul/';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('user') ?? '';
+    var data = jsonDecode(user);
+    setState(() {
+      _isUploading = true;
+      _uploadProgress = 0.0;
+    });
+
+    try {
+      final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+      for (int i = 0; i < _images.length; i++) {
+        if (_images[i] != null) {
+          final stream = http.ByteStream(_images[i]!.openRead());
+          final length = await _images[i]!.length();
+          final multipartFile = http.MultipartFile(
+            'files', // Ensure unique field names
+            stream,
+            length,
+            filename: path.basename(_images[i]!.path),
+          );
+          request.files.add(multipartFile);
+        }
+      }
+      print(_selectedOption1);
+      List<WarehouseType> filtered = [];
+      filtered = datas
+          .where((data) =>
+              data.name.toLowerCase().contains(_selectedOption1.toLowerCase()))
+          .toList();
+      print(filtered[0].toJson());
+      request.fields['data'] = '{"nama_sopir":"' +
+          _namaSopirController.text +
+          '", "no_polisi":"' +
+          _noPolisiController.text +
+          '", "nama_vendor":"' +
+          _vendorController.text +
+          '", "jenis_kendaraan":"' +
+          _jenis_kendaraanController.text +
+          '", "asal":"' +
+          _asalController.text +
+          '", "no_surat_jalan":"' +
+          _no_surat_jalanController.text +
+          '", "nomor_seal":"' +
+          _no_sealController.text +
+          '", "waktu_start_asal":"' +
+          _waktu_start_asalController.text +
+          '", "waktu_tiba":"' +
+          _waktu_tibaController.text +
+          '", "tujuan":"' +
+          _tujuanController.text +
+          '", "waktu_tujuan":"' +
+          _waktu_tujuanController.text +
+          '","warehouseType":' +
+          jsonEncode(filtered[0].toJson()) +
+          ',"user":' +
+          jsonEncode(data['pegawai']['user']) +
+          ',"lokasi":' +
+          jsonEncode(data['pegawai']['lokasi']) +
+          '}';
+
+      request.headers.addAll({'x-access-token': data['accessToken']});
+      var streamedResponse = await request.send();
+
+      streamedResponse.stream.listen((value) {
+        setState(() {
+          _uploadProgress += value.length / streamedResponse.contentLength!;
+        });
+      });
+
+      if (streamedResponse.statusCode == 200) {
+        //print('Uploaded successfully');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Data berhasil dikirim'),
+            behavior:
+                SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Data gagal dikirim'),
+            behavior:
+                SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.red,
+          ),
+        );
+        //print(streamedResponse);
+        print(streamedResponse.statusCode);
+        print(streamedResponse.reasonPhrase);
+        //print('Upload failed');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Terjadi error..'),
+          behavior:
+              SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+        ),
+      );
+      print('Error uploading data: $e');
+    } finally {
+      setState(() {
+        _isUploading = false;
+        _uploadProgress = 0.0;
+      });
     }
 
     //Navigator.of(context).pop();
@@ -511,7 +636,7 @@ class _FormCekLinehaulState extends State<FormCekLinehaul> {
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller: _vendorController,
+                  controller: _jenis_kendaraanController,
                   //maxLines: 4,
                   decoration: InputDecoration(
                     labelText: 'Jenis Kendaraan (wajib)',
@@ -525,7 +650,7 @@ class _FormCekLinehaulState extends State<FormCekLinehaul> {
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller: _vendorController,
+                  controller: _asalController,
                   //maxLines: 4,
                   decoration: InputDecoration(
                     labelText: 'Asal (wajib)',
@@ -539,7 +664,7 @@ class _FormCekLinehaulState extends State<FormCekLinehaul> {
                 ),
                 SizedBox(height: 10),
                 TextFormField(
-                  controller: _noSuratController,
+                  controller: _no_surat_jalanController,
                   //maxLines: 4,
                   decoration: InputDecoration(
                     labelText: 'No Surat Jalan  (wajib)',
@@ -598,6 +723,20 @@ class _FormCekLinehaulState extends State<FormCekLinehaul> {
                   controller: _tujuanController,
                   //maxLines: 4,
                   decoration: InputDecoration(
+                    labelText: 'Tujuan (wajib)',
+                  ),
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Masukkan Tujuan';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 10),
+                TextFormField(
+                  controller: _waktu_tujuanController,
+                  //maxLines: 4,
+                  decoration: InputDecoration(
                     labelText: 'Waktu Tujuan (wajib)',
                   ),
                   validator: (value) {
@@ -612,13 +751,14 @@ class _FormCekLinehaulState extends State<FormCekLinehaul> {
                   width: double.infinity,
                   margin: EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                    onPressed: _image == null || _isUploading
-                        ? null
-                        : () {
-                            if (_formKey.currentState!.validate()) {
-                              _uploadData();
-                            }
-                          },
+                    onPressed:
+                        _images.any((image) => image == null) || _isUploading
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  _uploadData();
+                                }
+                              },
                     style: ElevatedButton.styleFrom(
                       //backgroundColor: AppColors.secondaryColor,
                       shape: RoundedRectangleBorder(

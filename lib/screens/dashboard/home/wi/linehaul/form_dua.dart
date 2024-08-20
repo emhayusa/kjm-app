@@ -5,35 +5,40 @@ import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:kjm_app/model/linehaul.dart';
+import 'package:kjm_app/model/warehouseType.dart';
 import 'package:path/path.dart' as path;
-import 'package:async/async.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FormPaket extends StatefulWidget {
-  const FormPaket({super.key});
+class FormDua extends StatefulWidget {
+  final LinehaulModel data;
+  final Function refreshListCallback;
+
+  const FormDua(
+      {super.key, required this.data, required this.refreshListCallback});
 
   @override
-  State<FormPaket> createState() => _FormPaketState();
+  State<FormDua> createState() => _FormDuaState();
 }
 
-class _FormPaketState extends State<FormPaket> {
+class _FormDuaState extends State<FormDua> {
   final _formKey = GlobalKey<FormState>();
-
+  XFile? _image;
   bool _isUploading = false;
+  bool isLoading = false;
   double _uploadProgress = 0.0;
 
-  List<XFile?> _images = [null, null];
-  TextEditingController _pengirimController = TextEditingController();
-  TextEditingController _keteranganController = TextEditingController();
-  TextEditingController _penerimaController = TextEditingController();
-  TextEditingController _alamatController = TextEditingController();
-  TextEditingController _hpController = TextEditingController();
+  String _selectedOption1 = "";
+
+  final ImagePicker _picker_one = ImagePicker();
+
+  List<XFile?> _images = [null];
+  TextEditingController _waktu_berangkatController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    // filteredTamus = tamus;
   }
 
   @override
@@ -44,7 +49,7 @@ class _FormPaketState extends State<FormPaket> {
 
   Future<void> _uploadData() async {
     //String apiUrl = 'https://geoportal.big.go.id/api-dev/file/upload';
-    String apiUrl = 'https://satukomando.id/api-prod/paket/datang-new';
+    String apiUrl = 'https://satukomando.id/api-prod/linehaul/dua';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String user = prefs.getString('user') ?? '';
     var data = jsonDecode(user);
@@ -54,7 +59,7 @@ class _FormPaketState extends State<FormPaket> {
     });
 
     try {
-      final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+      final request = http.MultipartRequest('PUT', Uri.parse(apiUrl));
       for (int i = 0; i < _images.length; i++) {
         if (_images[i] != null) {
           final stream = http.ByteStream(_images[i]!.openRead());
@@ -68,20 +73,13 @@ class _FormPaketState extends State<FormPaket> {
           request.files.add(multipartFile);
         }
       }
-      request.fields['data'] = '{"namaPengirim":"' +
-          _pengirimController.text +
-          '","keterangan":"' +
-          _keteranganController.text +
-          '","namaPenerima":"' +
-          _penerimaController.text +
-          '","alamat":"' +
-          _alamatController.text +
-          '","hp":"' +
-          _hpController.text +
+
+      request.fields['data'] = '{"waktu_berangkat":"' +
+          _waktu_berangkatController.text +
+          '", "uuid":"' +
+          widget.data.uuid +
           '","user":' +
           jsonEncode(data['pegawai']['user']) +
-          ',"lokasi":' +
-          jsonEncode(data['pegawai']['lokasi']) +
           '}';
 
       request.headers.addAll({'x-access-token': data['accessToken']});
@@ -136,113 +134,18 @@ class _FormPaketState extends State<FormPaket> {
         _isUploading = false;
         _uploadProgress = 0.0;
       });
+      widget.refreshListCallback();
     }
-    /*
-      //final stream = http.ByteStream(_image!.openRead());
-      //final length = await _image!.length();
-
-      final multipartFile = http.MultipartFile(
-        'file',
-        stream,
-        length,
-        filename: path.basename(_image!.path),
-      );
-
-      request.files.add(multipartFile);
-      request.headers.addAll({'x-access-token': data['accessToken']});
-      final response = await request.send();
-
-      final totalBytes = response.contentLength;
-      //print("total bytes");
-      //print(totalBytes);
-      response.stream.listen(
-        (List<int> event) {
-          final sentBytes = event.length;
-          // print('sent $sentBytes');
-          //_updateProgress(sentBytes, totalBytes!);
-        },
-        onDone: () {
-          //print(response.statusCode);
-          //print(response.request);
-
-          if (response.statusCode == 200) {
-            // Upload completed successfully
-            //Navigator.pop(context);
-            //widget.onClose();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Data berhasil dikirim'),
-                behavior: SnackBarBehavior
-                    .floating, // Ubah lokasi menjadi di bagian atas
-                duration: Duration(seconds: 3),
-                backgroundColor: Colors.green,
-              ),
-            );
-            Navigator.pop(context);
-          } else {
-            // Handle API error response
-            print(response.reasonPhrase);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Data gagal dikirim'),
-                behavior: SnackBarBehavior
-                    .floating, // Ubah lokasi menjadi di bagian atas
-                duration: Duration(seconds: 3),
-                backgroundColor: Colors.red,
-              ),
-            );
-          }
-
-          setState(() {
-            _isUploading = false;
-            //_uploadProgress = 0.0;
-            //_image = null;
-          });
-        },
-        onError: (error) {
-          // Handle upload error
-          // print(error);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Terjadi Error..'),
-              behavior: SnackBarBehavior
-                  .floating, // Ubah lokasi menjadi di bagian atas
-              duration: Duration(seconds: 3),
-              backgroundColor: Colors.red,
-            ),
-          );
-          setState(() {
-            _isUploading = false;
-            //_uploadProgress = 0.0;
-            //_image = null;
-          });
-        },
-      );
-    } catch (e) {
-      // Menangani kesalahan yang terjadi saat mengunggah gambar
-      //print(e);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Oops.. Error terjadi..'),
-          behavior:
-              SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
-          duration: Duration(seconds: 3),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-    */
 
     //Navigator.of(context).pop();
   }
 
   Future<void> _captureImage(int index) async {
     try {
-      final ImagePicker picker = ImagePicker();
-      final pickedFile = await picker.pickImage(source: ImageSource.camera);
-      //final pickedFile = index == 0
-      //    ? await _picker_one.pickImage(source: ImageSource.camera)
-      //    : await _picker_two.pickImage(source: ImageSource.camera);
+      //final ImagePicker picker = ImagePicker();
+      //final pickedFile = await picker.pickImage(source: ImageSource.camera);
+      final pickedFile =
+          await _picker_one.pickImage(source: ImageSource.camera);
 
       if (pickedFile != null) {
         XFile compressedImage = await _compressImage(File(pickedFile.path));
@@ -278,15 +181,16 @@ class _FormPaketState extends State<FormPaket> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Form Isian Paket'),
+        title: const Text('Form Isian Linehaul'),
         centerTitle: true,
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
             child: Column(
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -307,26 +211,7 @@ class _FormPaketState extends State<FormPaket> {
                                     fit: BoxFit.cover),
                           ),
                         ),
-                        Text("Foto Kurir"),
-                      ],
-                    ),
-                    Column(
-                      children: [
-                        GestureDetector(
-                          onTap: () => _captureImage(1),
-                          child: Container(
-                            margin: EdgeInsets.all(10),
-                            width: 100,
-                            height: 100,
-                            color: Colors.grey[200],
-                            child: _images[1] == null
-                                ? Icon(Icons.camera_alt,
-                                    size: 50, color: Colors.grey[400])
-                                : Image.file(File(_images[1]!.path),
-                                    fit: BoxFit.cover),
-                          ),
-                        ),
-                        Text("Foto Paket"),
+                        Text("Foto Pintu Tersegel"),
                       ],
                     ),
                   ],
@@ -382,73 +267,19 @@ class _FormPaketState extends State<FormPaket> {
                     return Container();
                   },
                 ),
+                SizedBox(height: 10),
                 TextFormField(
-                  controller: _pengirimController,
+                  controller: _waktu_berangkatController,
+                  //maxLines: 4,
                   decoration: InputDecoration(
-                    labelText: 'Nama Pengirim (wajib)',
+                    labelText: 'Waktu Berangkat (wajib)',
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
-                      return 'Masukkan Nama Pengirim';
+                      return 'Masukkan Waktu Berangkat';
                     }
                     return null;
                   },
-                ),
-                TextFormField(
-                  controller: _keteranganController,
-                  decoration: InputDecoration(
-                    labelText: 'Keterangan (wajib)',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Masukkan Keterangan';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _penerimaController,
-                  decoration: InputDecoration(
-                    labelText: 'Nama Penerima (wajib)',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Masukkan Nama Penerima';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _hpController,
-                  decoration: InputDecoration(
-                    labelText: 'HP Penerima (wajib)',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Masukkan HP Penerima';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _alamatController,
-                  maxLines: 2,
-                  decoration: InputDecoration(
-                    labelText: 'Alamat Penerima (wajib)',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Masukkan Alamat Penerima';
-                    }
-                    return null;
-                  },
-                ),
-                if (_isUploading) ...[
-                  SizedBox(height: 20),
-                  LinearProgressIndicator(value: _uploadProgress),
-                ],
-                SizedBox(
-                  height: 50,
                 ),
                 Container(
                   width: double.infinity,
@@ -463,6 +294,7 @@ class _FormPaketState extends State<FormPaket> {
                                 }
                               },
                     style: ElevatedButton.styleFrom(
+                      //backgroundColor: AppColors.secondaryColor,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -476,7 +308,6 @@ class _FormPaketState extends State<FormPaket> {
           ),
         ),
       ),
-
       /*actions: [
         ElevatedButton(
           onPressed: _isUploading

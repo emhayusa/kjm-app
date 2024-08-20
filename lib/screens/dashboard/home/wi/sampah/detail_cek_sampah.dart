@@ -49,7 +49,19 @@ class _DetailCekSampahState extends State<DetailCekSampah> {
               SizedBox(height: 16.0),
               ListTile(
                 leading: Icon(Icons.check_box_outline_blank),
-                title: Text("Deskripsi: " + widget.data.description),
+                title: Text("Deskripsi: ${widget.data.deskripsi}"),
+              ),
+              ListTile(
+                leading: Icon(Icons.check_box_outline_blank),
+                title: Text("Nama Petugas: ${widget.data.nama_petugas}"),
+              ),
+              ListTile(
+                leading: Icon(Icons.check_box_outline_blank),
+                title: Text("Nama Vendor: ${widget.data.nama_vendor}"),
+              ),
+              ListTile(
+                leading: Icon(Icons.check_box_outline_blank),
+                title: Text("Temuan: ${widget.data.temuan}"),
               ),
               ListTile(
                 leading: Icon(Icons.access_time),

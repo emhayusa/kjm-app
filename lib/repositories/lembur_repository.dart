@@ -4,7 +4,6 @@ import 'package:http/http.dart' as http;
 import 'package:kjm_app/constants.dart';
 import 'package:kjm_app/model/request/lembur_request_model.dart';
 import 'package:kjm_app/model/response/lembur_response_model.dart';
-import 'package:kjm_app/model/user_profile.dart';
 import 'package:kjm_app/utils/user_preference.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,8 +49,8 @@ class LemburRepository {
     );
 
     request.fields['uuid'] = uuid!;
-    request.fields['firstname'] = lemburDatang.email ?? '';
-    request.fields['lastname'] = lemburDatang.password ?? '';
+    request.fields['firstname'] = lemburDatang.email;
+    request.fields['lastname'] = lemburDatang.password;
 
     if (image != null) {
       request.files.add(await http.MultipartFile.fromPath(

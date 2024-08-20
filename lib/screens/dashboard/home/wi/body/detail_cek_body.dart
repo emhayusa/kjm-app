@@ -48,8 +48,12 @@ class _DetailCekBodyState extends State<DetailCekBody> {
             children: [
               SizedBox(height: 16.0),
               ListTile(
-                leading: Icon(Icons.check_box_outline_blank),
-                title: Text("Deskripsi: " + widget.data.description),
+                leading: const Icon(Icons.check_box_outline_blank),
+                title: Text("Deskripsi: ${widget.data.description}"),
+              ),
+              ListTile(
+                leading: const Icon(Icons.check_box_outline_blank),
+                title: Text("Temuan: ${widget.data.temuan ?? "-"}"),
               ),
               ListTile(
                 leading: Icon(Icons.access_time),

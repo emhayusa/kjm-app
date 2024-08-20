@@ -56,13 +56,15 @@ class _DetailKejadianState extends State<DetailKejadian> {
               ),
               ListTile(
                 leading: Icon(Icons.book_online_outlined),
-                title: Text(widget.reportan.description),
+                title: Text(widget.reportan.kronologi),
               ),
               ListTile(
                 leading: Icon(Icons.mobile_friendly),
-                title: Text(widget.reportan.penanganan == ""
-                    ? '-'
-                    : widget.reportan.penanganan!),
+                title: Text(widget.reportan.tindakan),
+              ),
+              ListTile(
+                leading: Icon(Icons.mobile_friendly),
+                title: Text(widget.reportan.hasil),
               ),
               ListTile(
                 leading: Icon(Icons.access_time),

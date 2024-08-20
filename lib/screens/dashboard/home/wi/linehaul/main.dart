@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:kjm_app/model/cekInhaul.model.dart';
+import 'package:kjm_app/model/linehaul.dart';
+import 'package:kjm_app/screens/dashboard/home/wi/linehaul/form_dua.dart';
 import 'package:kjm_app/utils/image_loader.dart';
 import 'form_cek_linehaul.dart';
 import 'dart:convert';
@@ -19,18 +20,18 @@ class _ListInhaulState extends State<ListInhaul> {
   late DateTime selectedDate;
   bool isLoading = false;
   TextEditingController searchController = TextEditingController();
-  List<CekInhaulModel> datas = [];
+  List<LinehaulModel> datas = [];
   //  Tamu('1', 'Joko', 'PT. Katulampa', 'Divisi Sales', 'Promosi barang',
   //      '2023-05-16 08:00:00', '2023-05-16 08:23:00'),
   //  Tamu('2', 'Budi', 'Perorangan', 'Divisi HRD', 'Melamar pekerjaan',
   //     '2023-05-16 09:00:00', '-'),
   //];
 
-  List<CekInhaulModel> filteredDatas = [];
+  List<LinehaulModel> filteredDatas = [];
 
   //String apiUrl = 'https://geoportal.big.go.id/api-dev/check-points/kantor/';
-  String apiUrl = 'https://satukomando.id/api-prod/cek-inhaul/';
-  String apiView = 'https://satukomando.id/api-prod/cek-inhaul/photoDatang/';
+  String apiUrl = 'https://satukomando.id/api-prod/linehaul/';
+  String apiView = 'https://satukomando.id/api-prod/linehaul/photo';
 
   @override
   void initState() {
@@ -43,6 +44,8 @@ class _ListInhaulState extends State<ListInhaul> {
   Future<void> fetchData() async {
     setState(() {
       isLoading = true;
+      datas = [];
+      filteredDatas = [];
       //_uploadProgress = 0.0;
       //_image = null;
     });
@@ -64,8 +67,8 @@ class _ListInhaulState extends State<ListInhaul> {
         //return parsed.map<Photo>((json) => Photo.fromJson(json)).toList();
         final List<dynamic> data = json.decode(response.body);
         // Create a list of model objects
-        List<CekInhaulModel> tamuList =
-            data.map((json) => CekInhaulModel.fromJson(json)).toList();
+        List<LinehaulModel> tamuList =
+            data.map((json) => LinehaulModel.fromJson(json)).toList();
 
         //print(response.body);
         //print(json.decode(response.body));
@@ -97,7 +100,7 @@ class _ListInhaulState extends State<ListInhaul> {
               //permission.date
               //    .toLowerCase()
               //    .contains(searchTerm.toLowerCase()) ||
-              data.noSurat.toLowerCase().contains(searchTerm.toLowerCase()))
+              data.namaSopir.toLowerCase().contains(searchTerm.toLowerCase()))
           .toList();
     });
   }
@@ -105,7 +108,7 @@ class _ListInhaulState extends State<ListInhaul> {
   void navigateToFormKendaraan() async {
     await Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => FormCekLinehaul()),
+      MaterialPageRoute(builder: (context) => const FormCekLinehaul()),
     );
     fetchData(); // Refresh the items when returning from the second widget
   }
@@ -155,7 +158,7 @@ class _ListInhaulState extends State<ListInhaul> {
                       : ListView.builder(
                           itemCount: filteredDatas.length,
                           itemBuilder: (BuildContext context, int index) {
-                            CekInhaulModel data = filteredDatas[index];
+                            LinehaulModel data = filteredDatas[index];
                             //print(data.waktuDatang);
                             //print(DateFormat("yyyy-MM-ddTHH:mm:ssZ")
                             //    .parseUTC(tamu.waktuDatang.toIso8601String()));
@@ -168,25 +171,25 @@ class _ListInhaulState extends State<ListInhaul> {
                                 child: ListTile(
                                   leading: buildImageFromUrl(
                                       '$apiView/${data.uuid}', 50.0),
-                                  title: Text('No Surat: ${data.noSurat}'),
+                                  title: Text('No Surat: ${data.noSuratJalan}'),
                                   subtitle: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                          'Waktu Datang: ${DateFormat('dd MMM yyyy, hh:mm:ss a').format(data.waktuDatang.toLocal())}\nNo Polisi: ${data.noPolisi}\nNama Driver: ${data.namaDriver}'),
-                                      data.waktuKabin == null
+                                          'Waktu Tiba: ${data.waktuTiba}\nNo Polisi: ${data.noPolisi}\nNama Sopir: ${data.namaSopir}'),
+                                      data.waktuBerangkat == null
                                           ? ElevatedButton(
                                               onPressed: () {
-                                                //Navigator.push(
-                                                //   context,
-                                                //   MaterialPageRoute(
-                                                //       builder: (context) =>
-                                                //           FormInhaulKabin(
-                                                //               box: data,
-                                                //               refreshListCallback:
-                                                //                   fetchData)),
-                                                // );
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          FormDua(
+                                                              data: data,
+                                                              refreshListCallback:
+                                                                  fetchData)),
+                                                );
                                               },
                                               style: ElevatedButton.styleFrom(
                                                 //backgroundColor: AppColors.secondaryColor,
@@ -195,78 +198,10 @@ class _ListInhaulState extends State<ListInhaul> {
                                                       BorderRadius.circular(8),
                                                 ),
                                               ),
-                                              child: Text('Foto Kabin'),
+                                              child: Text('Tahap Akhir'),
                                             )
-                                          : SizedBox(),
-                                      data.waktuBox == null
-                                          ? ElevatedButton(
-                                              onPressed: () {
-                                                //Navigator.push(
-                                                //  context,
-                                                //  MaterialPageRoute(
-                                                //      builder: (context) =>
-                                                //          FormInhaulBox(
-                                                //              box: data,
-                                                //              refreshListCallback:
-                                                //                  fetchData)),
-                                                //);
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                //backgroundColor: AppColors.secondaryColor,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                              child: Text('Foto Isi Box'),
-                                            )
-                                          : SizedBox(),
-                                      data.waktuPaket == null
-                                          ? ElevatedButton(
-                                              onPressed: () {
-                                                //Navigator.push(
-                                                //  context,
-                                                //  MaterialPageRoute(
-                                                //      builder: (context) =>
-                                                //          FormInhaulPaket(
-                                                //              box: data,
-                                                //              refreshListCallback:
-                                                //                  fetchData)),
-                                                //);
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                //backgroundColor: AppColors.secondaryColor,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                              child: Text('Foto Temu Paket'),
-                                            )
-                                          : SizedBox(),
-                                      data.waktuKeluar == null
-                                          ? ElevatedButton(
-                                              onPressed: () {
-                                                //Navigator.push(
-                                                //  context,
-                                                //  MaterialPageRoute(
-                                                //      builder: (context) =>
-                                                //          FormInhaulKeluar(
-                                                //              box: data,
-                                                //              refreshListCallback:
-                                                //                  handleRefresh)),
-                                                //);
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                //backgroundColor: AppColors.secondaryColor,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                              child: Text('Foto Keluar'),
-                                            )
-                                          : SizedBox(),
+                                          : Text(
+                                              'Waktu Berangkat: ${data.waktuBerangkat}'),
                                     ],
                                   ),
                                   //trailing: Text(permission.date),

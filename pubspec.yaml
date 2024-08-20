@@ -53,6 +53,7 @@ dependencies:
   firebase_core: ^2.14.0
   firebase_messaging: ^14.6.4
   provider: ^6.1.2
+  async: ^2.11.0
 
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1

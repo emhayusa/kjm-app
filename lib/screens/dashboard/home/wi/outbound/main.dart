@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 //import 'package:intl/intl.dart';
 import 'package:kjm_app/model/cekTask.model.dart';
+import 'package:kjm_app/model/outbound.dart';
+import 'package:kjm_app/screens/dashboard/home/wi/outbound/form_foto.dart';
+import 'package:kjm_app/screens/dashboard/home/wi/outbound/form_tiga.dart';
+import 'package:kjm_app/utils/image_loader.dart';
 //import 'package:kjm_app/utils/image_loader.dart';
 import 'form_cek_outbound.dart';
 
@@ -20,18 +24,18 @@ class _ListOutboundState extends State<ListOutbound> {
   late DateTime selectedDate;
   bool isLoading = false;
   TextEditingController searchController = TextEditingController();
-  List<CekTaskModel> datas = [];
+  List<OutboundModel> datas = [];
   //  Tamu('1', 'Joko', 'PT. Katulampa', 'Divisi Sales', 'Promosi barang',
   //      '2023-05-16 08:00:00', '2023-05-16 08:23:00'),
   //  Tamu('2', 'Budi', 'Perorangan', 'Divisi HRD', 'Melamar pekerjaan',
   //     '2023-05-16 09:00:00', '-'),
   //];
 
-  List<CekTaskModel> filteredDatas = [];
+  List<OutboundModel> filteredDatas = [];
 
   //String apiUrl = 'https://geoportal.big.go.id/api-dev/check-points/kantor/';
-  String apiUrl = 'https://satukomando.id/api-prod/cek-task/';
-  String apiView = 'https://satukomando.id/api-prod/cek-task/photoBox/';
+  String apiUrl = 'https://satukomando.id/api-prod/outbound/';
+  String apiView = 'https://satukomando.id/api-prod/outbound/photo/';
 
   @override
   void initState() {
@@ -65,8 +69,8 @@ class _ListOutboundState extends State<ListOutbound> {
         //return parsed.map<Photo>((json) => Photo.fromJson(json)).toList();
         final List<dynamic> data = json.decode(response.body);
         // Create a list of model objects
-        List<CekTaskModel> tamuList =
-            data.map((json) => CekTaskModel.fromJson(json)).toList();
+        List<OutboundModel> tamuList =
+            data.map((json) => OutboundModel.fromJson(json)).toList();
 
         //print(response.body);
         //print(json.decode(response.body));
@@ -98,7 +102,7 @@ class _ListOutboundState extends State<ListOutbound> {
               //permission.date
               //    .toLowerCase()
               //    .contains(searchTerm.toLowerCase()) ||
-              data.noSurat.toLowerCase().contains(searchTerm.toLowerCase()))
+              data.namaSopir.toLowerCase().contains(searchTerm.toLowerCase()))
           .toList();
     });
   }
@@ -156,36 +160,38 @@ class _ListOutboundState extends State<ListOutbound> {
                       : ListView.builder(
                           itemCount: filteredDatas.length,
                           itemBuilder: (BuildContext context, int index) {
-                            //CekTaskModel data = filteredDatas[index];
+                            OutboundModel data = filteredDatas[index];
                             //print(data.waktuDatang);
                             //print(DateFormat("yyyy-MM-ddTHH:mm:ssZ")
                             //    .parseUTC(tamu.waktuDatang.toIso8601String()));
                             //print(DateFormat('dd MMM yyyy hh:mm:ss a')
                             //    .format(tamu.waktuDatang.toLocal()));
-                            return Container();
-                            /*return Card(
+                            return Card(
                               margin: EdgeInsets.all(4.0),
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: ListTile(
                                   leading: buildImageFromUrl(
                                       '$apiView/${data.uuid}', 50.0),
-                                  title: Text('No Surat: ${data.noSurat}'),
+                                  title: Text('Nama Sopir: ${data.namaSopir}'),
                                   subtitle: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                          'Waktu Box: ${DateFormat('dd MMM yyyy, hh:mm:ss a').format(data.waktuBox.toLocal())}\nNo Polisi: ${data.noPolisi}'),
-                                      data.waktuKarung == null
+                                          'Waktu Tiba: ${data.waktuTiba}\nNo Polisi: ${data.noPolisi}'),
+                                      data.waktu2 == null
                                           ? ElevatedButton(
                                               onPressed: () {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          FormTaskKarung(
-                                                              task: data,
+                                                          FormFoto(
+                                                              data: data,
+                                                              id: 2,
+                                                              label:
+                                                                  "Stopper Ban",
                                                               refreshListCallback:
                                                                   fetchData)),
                                                 );
@@ -197,18 +203,22 @@ class _ListOutboundState extends State<ListOutbound> {
                                                       BorderRadius.circular(8),
                                                 ),
                                               ),
-                                              child: Text('Foto Karung'),
+                                              child: Text('Foto Stopper Ban'),
                                             )
-                                          : SizedBox(),
-                                      data.waktuSelesai == null
+                                          : Text(
+                                              'Waktu Stopper Ban: ${data.waktu2}'),
+                                      data.waktu3 == null
                                           ? ElevatedButton(
                                               onPressed: () {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          FormTaskSelesai(
-                                                              task: data,
+                                                          FormFoto(
+                                                              data: data,
+                                                              id: 3,
+                                                              label:
+                                                                  "Kabin Sopir",
                                                               refreshListCallback:
                                                                   fetchData)),
                                                 );
@@ -220,20 +230,24 @@ class _ListOutboundState extends State<ListOutbound> {
                                                       BorderRadius.circular(8),
                                                 ),
                                               ),
-                                              child: Text('Foto Selesai'),
+                                              child: Text('Foto Kabin Sopir'),
                                             )
-                                          : SizedBox(),
-                                      data.waktuKeluar == null
+                                          : Text(
+                                              'Waktu Kabin Sopir: ${data.waktu3}'),
+                                      data.waktu4 == null
                                           ? ElevatedButton(
                                               onPressed: () {
                                                 Navigator.push(
                                                   context,
                                                   MaterialPageRoute(
                                                       builder: (context) =>
-                                                          FormTaskKeluar(
-                                                              task: data,
+                                                          FormFoto(
+                                                              data: data,
+                                                              id: 4,
+                                                              label:
+                                                                  "Rem tangan",
                                                               refreshListCallback:
-                                                                  handleRefresh)),
+                                                                  fetchData)),
                                                 );
                                               },
                                               style: ElevatedButton.styleFrom(
@@ -243,24 +257,156 @@ class _ListOutboundState extends State<ListOutbound> {
                                                       BorderRadius.circular(8),
                                                 ),
                                               ),
-                                              child: Text('Foto Keluar'),
+                                              child: Text('Foto Rem Tangan'),
                                             )
-                                          : SizedBox(),
+                                          : Text(
+                                              'Waktu Rem Tangan: ${data.waktu4}'),
+                                      data.waktu5 == null
+                                          ? ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) => FormFoto(
+                                                          data: data,
+                                                          id: 5,
+                                                          label:
+                                                              "Kabin Box Kosong",
+                                                          refreshListCallback:
+                                                              fetchData)),
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                //backgroundColor: AppColors.secondaryColor,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child:
+                                                  Text('Foto Kabin Box Kosong'),
+                                            )
+                                          : Text(
+                                              'Waktu Kabin Box Kosong: ${data.waktu5}'),
+                                      data.waktu6 == null
+                                          ? ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          FormFoto(
+                                                              data: data,
+                                                              id: 6,
+                                                              label:
+                                                                  "Box Terisi",
+                                                              refreshListCallback:
+                                                                  fetchData)),
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                //backgroundColor: AppColors.secondaryColor,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child: Text('Foto Box Terisi'),
+                                            )
+                                          : Text(
+                                              'Waktu Box Terisi: ${data.waktu6}'),
+                                      data.waktu7 == null
+                                          ? ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          FormFoto(
+                                                              data: data,
+                                                              id: 7,
+                                                              label: "Tersegel",
+                                                              refreshListCallback:
+                                                                  fetchData)),
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                //backgroundColor: AppColors.secondaryColor,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child: Text('Foto Tersegel'),
+                                            )
+                                          : Text(
+                                              'Waktu Tersegel: ${data.waktu7}'),
+                                      data.waktu8 == null
+                                          ? ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          FormFoto(
+                                                              data: data,
+                                                              id: 8,
+                                                              label:
+                                                                  "Temuan Paket",
+                                                              refreshListCallback:
+                                                                  fetchData)),
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                //backgroundColor: AppColors.secondaryColor,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child: Text('Foto Temuan paket'),
+                                            )
+                                          : Text(
+                                              'Waktu Temuan Paket: ${data.waktu8}'),
+                                      data.waktuBerangkat == null
+                                          ? ElevatedButton(
+                                              onPressed: () {
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          FormTiga(
+                                                              data: data,
+                                                              refreshListCallback:
+                                                                  fetchData)),
+                                                );
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                //backgroundColor: AppColors.secondaryColor,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                ),
+                                              ),
+                                              child: Text('Tahap Akhir'),
+                                            )
+                                          : Text(
+                                              'Waktu Berangkat: ${data.waktuBerangkat}'),
                                     ],
                                   ),
                                   //trailing: Text(permission.date),
                                   onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) => DetailCekTask(
-                                                task: data,
-                                              )),
-                                    );
+                                    //Navigator.push(
+                                    //  context,
+                                    //  MaterialPageRoute(
+                                    //      builder: (context) => DetailCekBox(
+                                    //            box: data,
+                                    //          )),
+                                    //);
                                   },
                                 ),
                               ),
-                            );*/
+                            );
                           },
                         ),
             ),

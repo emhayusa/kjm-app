@@ -54,7 +54,7 @@ class _MainKejadianState extends State<MainKejadian> {
       var data = jsonDecode(user);
       //print(data['pegawai']['lokasi']['uuid']);
       // final response = await http.get(Uri.parse('$API_PROFILE/$userId'));
-      var urlnya = apiUrl + "lokasi/" + data['pegawai']['lokasi']['uuid'];
+      var urlnya = apiUrl + "lokasi-new/" + data['pegawai']['lokasi']['uuid'];
       //print(urlnya);
       final response = await http.get(Uri.parse(urlnya),
           headers: {"x-access-token": data['accessToken']});
@@ -229,34 +229,10 @@ class _MainKejadianState extends State<MainKejadian> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                          'Description:\n${data.description}\nWaktu kejadian:\n${DateFormat('dd MMM yyyy, hh:mm:ss a').format(data.createdAt.toLocal())}'),
+                                          'Waktu kejadian:\n${DateFormat('dd MMM yyyy, hh:mm:ss a').format(data.createdAt.toLocal())}'),
                                       SizedBox(
                                         height: 10,
                                       ),
-                                      data.penanganan == ""
-                                          ? ElevatedButton(
-                                              onPressed: () {
-                                                /*Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          FormKejadianPenanganan(
-                                                              reportan: data,
-                                                              refreshListCallback:
-                                                                  fetchData)),
-                                                );
-                                                */
-                                              },
-                                              style: ElevatedButton.styleFrom(
-                                                //backgroundColor: AppColors.secondaryColor,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                ),
-                                              ),
-                                              child: Text('Update Penanganan'),
-                                            )
-                                          : SizedBox()
                                     ],
                                   ),
                                   //trailing: Text(permission.date),

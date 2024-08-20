@@ -49,11 +49,31 @@ class _DetailCekBagasiState extends State<DetailCekBagasi> {
               SizedBox(height: 16.0),
               ListTile(
                 leading: Icon(Icons.check_box_outline_blank),
-                title: Text("Deskripsi: " + widget.data.description),
+                title: Text("Deskripsi: " + widget.data.deskripsi),
+              ),
+              ListTile(
+                leading: Icon(Icons.check_box_outline_blank),
+                title: Text("Nama Perwakilan: " + widget.data.nama_perwakilan),
+              ),
+              ListTile(
+                leading: Icon(Icons.check_box_outline_blank),
+                title: Text("Nama Supervisor: " + widget.data.nama_supervisor),
+              ),
+              ListTile(
+                leading: Icon(Icons.check_box_outline_blank),
+                title: Text("Temuan: " + widget.data.temuan),
+              ),
+              ListTile(
+                leading: Icon(Icons.check_box_outline_blank),
+                title: Text("Waktu Mulai: " + widget.data.waktu_mulai),
+              ),
+              ListTile(
+                leading: Icon(Icons.check_box_outline_blank),
+                title: Text("Waktu Selesai: " + widget.data.waktu_selesai),
               ),
               ListTile(
                 leading: Icon(Icons.access_time),
-                title: Text("Waktu: " +
+                title: Text("Waktu Lapor: " +
                     DateFormat('dd MMM yyyy, hh:mm:ss a')
                         .format(widget.data.createdAt.toLocal())),
               ),

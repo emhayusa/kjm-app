@@ -94,7 +94,7 @@ class _ListBagasiState extends State<ListBagasi> {
               //permission.date
               //    .toLowerCase()
               //    .contains(searchTerm.toLowerCase()) ||
-              data.description.toLowerCase().contains(searchTerm.toLowerCase()))
+              data.deskripsi.toLowerCase().contains(searchTerm.toLowerCase()))
           .toList();
     });
   }
@@ -165,7 +165,7 @@ class _ListBagasiState extends State<ListBagasi> {
                                 child: ListTile(
                                   leading: buildImageFromUrl(
                                       '$apiView/${data.uuid}', 50.0),
-                                  title: Text('Deskripsi: ${data.description}'),
+                                  title: Text('Deskripsi: ${data.deskripsi}'),
                                   subtitle: Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,

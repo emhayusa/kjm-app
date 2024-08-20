@@ -55,6 +55,20 @@ class _FormTamuState extends State<FormTamu> {
     try {
       final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
 
+      for (int i = 0; i < _images.length; i++) {
+        if (_images[i] != null) {
+          final stream = http.ByteStream(_images[i]!.openRead());
+          final length = await _images[i]!.length();
+          final multipartFile = http.MultipartFile(
+            'files', // Ensure unique field names
+            stream,
+            length,
+            filename: path.basename(_images[i]!.path),
+          );
+          request.files.add(multipartFile);
+        }
+      }
+
       request.fields['data'] = '{"namaTamu":"' +
           _namaController.text +
           '","tujuan":"' +
@@ -68,17 +82,6 @@ class _FormTamuState extends State<FormTamu> {
           ',"lokasi":' +
           jsonEncode(data['pegawai']['lokasi']) +
           '}';
-
-      for (int i = 0; i < _images.length; i++) {
-        if (_images[i] != null) {
-          var stream = http.ByteStream(
-              DelegatingStream.typed(File(_images[i]!.path).openRead()));
-          var length = await File(_images[i]!.path).length();
-          var multipartFile = http.MultipartFile('images[]', stream, length,
-              filename: path.basename(_images[i]!.path));
-          request.files.add(multipartFile);
-        }
-      }
 
       request.headers.addAll({'x-access-token': data['accessToken']});
       var streamedResponse = await request.send();

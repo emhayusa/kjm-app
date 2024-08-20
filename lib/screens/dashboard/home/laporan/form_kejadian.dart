@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:kjm_app/model/reportType.dart';
 import 'package:path/path.dart' as path;
+import 'package:async/async.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FormKejadian extends StatefulWidget {
@@ -17,10 +18,11 @@ class FormKejadian extends StatefulWidget {
 
 class _FormKejadianState extends State<FormKejadian> {
   final _formKey = GlobalKey<FormState>();
-  List<File?> _images = [null, null, null];
+  List<File?> _images = [null, null];
 
   XFile? _image;
   bool _isUploading = false;
+  double _uploadProgress = 0.0;
   bool isLoading = false;
 
   String _selectedOption1 = "";
@@ -135,7 +137,7 @@ class _FormKejadianState extends State<FormKejadian> {
     }
   }
 
-  Future<void> _uploadData() async {
+  Future<void> _uploadDataOld() async {
     //String apiUrl = 'https://geoportal.big.go.id/api-dev/file/upload';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -263,17 +265,128 @@ class _FormKejadianState extends State<FormKejadian> {
         );
       }
     } catch (e) {
-      // Menangani kesalahan yang terjadi saat mengunggah gambar
-      //print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Oops.. Error terjadi..'),
+          content: Text('Terjadi error..'),
           behavior:
               SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
           duration: Duration(seconds: 3),
           backgroundColor: Colors.red,
         ),
       );
+      print('Error uploading data: $e');
+    } finally {
+      setState(() {
+        _isUploading = false;
+        _uploadProgress = 0.0;
+      });
+    }
+
+    //Navigator.of(context).pop();
+  }
+
+  Future<void> _uploadData() async {
+    //String apiUrl = 'https://geoportal.big.go.id/api-dev/file/upload';
+    String apiUrl = 'https://satukomando.id/api-prod/report/new';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('user') ?? '';
+    var data = jsonDecode(user);
+    setState(() {
+      _isUploading = true;
+      _uploadProgress = 0.0;
+    });
+
+    try {
+      final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+      for (int i = 0; i < _images.length; i++) {
+        if (_images[i] != null) {
+          final stream = http.ByteStream(_images[i]!.openRead());
+          final length = await _images[i]!.length();
+          final multipartFile = http.MultipartFile(
+            'files', // Ensure unique field names
+            stream,
+            length,
+            filename: path.basename(_images[i]!.path),
+          );
+          request.files.add(multipartFile);
+        }
+      }
+
+      print(_selectedOption1);
+      List<ReportType> filtered = [];
+      filtered = datas
+          .where((data) =>
+              data.name.toLowerCase().contains(_selectedOption1.toLowerCase()))
+          .toList();
+      print(filtered[0].toJson());
+      request.fields['data'] = '{"waktu":"' +
+          _waktuController.text +
+          '","kronologi":"' +
+          _situasiController.text +
+          '","tindakan":"' +
+          _penangananController.text +
+          '","hasil":"' +
+          _hasilController.text +
+          '","reportType":' +
+          jsonEncode(filtered[0].toJson()) +
+          ',"user":' +
+          jsonEncode(data['pegawai']['user']) +
+          ',"lokasi":' +
+          jsonEncode(data['pegawai']['lokasi']) +
+          '}';
+
+      request.headers.addAll({'x-access-token': data['accessToken']});
+      var streamedResponse = await request.send();
+
+      streamedResponse.stream.listen((value) {
+        setState(() {
+          _uploadProgress += value.length / streamedResponse.contentLength!;
+        });
+      });
+
+      if (streamedResponse.statusCode == 200) {
+        //print('Uploaded successfully');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Data berhasil dikirim'),
+            behavior:
+                SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Data gagal dikirim'),
+            behavior:
+                SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.red,
+          ),
+        );
+        //print(streamedResponse);
+        print(streamedResponse.statusCode);
+        print(streamedResponse.reasonPhrase);
+        //print('Upload failed');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Terjadi error..'),
+          behavior:
+              SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+        ),
+      );
+      print('Error uploading data: $e');
+    } finally {
+      setState(() {
+        _isUploading = false;
+        _uploadProgress = 0.0;
+      });
     }
 
     //Navigator.of(context).pop();
@@ -299,7 +412,7 @@ class _FormKejadianState extends State<FormKejadian> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-                  for (int i = 0; i < 3; i++)
+                  for (int i = 0; i < 2; i++)
                     Column(
                       children: [
                         GestureDetector(

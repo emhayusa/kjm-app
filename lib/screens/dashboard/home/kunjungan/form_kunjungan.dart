@@ -22,6 +22,8 @@ class _FormKunjunganState extends State<FormKunjungan> {
   final _formKey = GlobalKey<FormState>();
   XFile? _image;
   bool _isUploading = false;
+
+  double _uploadProgress = 0.0;
   bool isLoading = false;
 
   String _selectedOption1 = "";
@@ -162,7 +164,7 @@ class _FormKunjunganState extends State<FormKunjungan> {
   }
   */
 
-  Future<void> _uploadData() async {
+  Future<void> _uploadDataOld() async {
     //String apiUrl = 'https://geoportal.big.go.id/api-dev/file/upload';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -311,6 +313,118 @@ class _FormKunjunganState extends State<FormKunjungan> {
           backgroundColor: Colors.red,
         ),
       );
+    }
+
+    //Navigator.of(context).pop();
+  }
+
+  Future<void> _uploadData() async {
+    //String apiUrl = 'https://geoportal.big.go.id/api-dev/file/upload';
+    String apiUrl = 'https://satukomando.id/api-prod/kunjungan/new';
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String user = prefs.getString('user') ?? '';
+    var data = jsonDecode(user);
+    setState(() {
+      _isUploading = true;
+      _uploadProgress = 0.0;
+    });
+
+    try {
+      final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+      for (int i = 0; i < _images.length; i++) {
+        if (_images[i] != null) {
+          final stream = http.ByteStream(_images[i]!.openRead());
+          final length = await _images[i]!.length();
+          final multipartFile = http.MultipartFile(
+            'files', // Ensure unique field names
+            stream,
+            length,
+            filename: path.basename(_images[i]!.path),
+          );
+          request.files.add(multipartFile);
+        }
+      }
+      print(_selectedOption1);
+      List<JenisKunjungan> filtered = [];
+      filtered = datas
+          .where((data) =>
+              data.name.toLowerCase().contains(_selectedOption1.toLowerCase()))
+          .toList();
+      print(filtered[0].toJson());
+
+      List<JenisSatuan> filtered2 = [];
+      filtered2 = datas2
+          .where((data) =>
+              data.name.toLowerCase().contains(_selectedOption2.toLowerCase()))
+          .toList();
+      print(filtered2[0].toJson());
+
+      request.fields['data'] = '{"description":"' +
+          _situasiController.text +
+          '", "hasil":"' +
+          _hasilController.text +
+          '","jenisKunjungan":' +
+          jsonEncode(filtered[0].toJson()) +
+          ',"jenisSatuan":' +
+          jsonEncode(filtered2[0].toJson()) +
+          ',"user":' +
+          jsonEncode(data['pegawai']['user']) +
+          ',"lokasi":' +
+          jsonEncode(data['pegawai']['lokasi']) +
+          '}';
+
+      request.headers.addAll({'x-access-token': data['accessToken']});
+      var streamedResponse = await request.send();
+
+      streamedResponse.stream.listen((value) {
+        setState(() {
+          _uploadProgress += value.length / streamedResponse.contentLength!;
+        });
+      });
+
+      if (streamedResponse.statusCode == 200) {
+        //print('Uploaded successfully');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Data berhasil dikirim'),
+            behavior:
+                SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Data gagal dikirim'),
+            behavior:
+                SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.red,
+          ),
+        );
+        //print(streamedResponse);
+        print(streamedResponse.statusCode);
+        print(streamedResponse.reasonPhrase);
+        //print('Upload failed');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Terjadi error..'),
+          behavior:
+              SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.red,
+        ),
+      );
+      print('Error uploading data: $e');
+    } finally {
+      setState(() {
+        _isUploading = false;
+        _uploadProgress = 0.0;
+      });
     }
 
     //Navigator.of(context).pop();
@@ -562,13 +676,14 @@ class _FormKunjunganState extends State<FormKunjungan> {
                   width: double.infinity,
                   margin: EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                    onPressed: _image == null || _isUploading
-                        ? null
-                        : () {
-                            if (_formKey.currentState!.validate()) {
-                              _uploadData();
-                            }
-                          },
+                    onPressed:
+                        _images.any((image) => image == null) || _isUploading
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  _uploadData();
+                                }
+                              },
                     style: ElevatedButton.styleFrom(
                       //backgroundColor: AppColors.secondaryColor,
                       shape: RoundedRectangleBorder(

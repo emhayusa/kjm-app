@@ -20,6 +20,7 @@ class _FormCekBodyState extends State<FormCekBody> {
   XFile? _image;
   bool _isUploading = false;
   bool isLoading = false;
+  double _uploadProgress = 0.0;
   String apiUrl = 'https://satukomando.id/api-prod/cek-body-new';
 
   final ImagePicker _picker_one = ImagePicker();
@@ -56,127 +57,96 @@ class _FormCekBodyState extends State<FormCekBody> {
     }
   }
   */
+
   Future<void> _uploadData() async {
     //String apiUrl = 'https://geoportal.big.go.id/api-dev/file/upload';
-
+    String apiUrl = 'https://satukomando.id/api-prod/cek-body';
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String user = prefs.getString('user') ?? '';
     var data = jsonDecode(user);
-    print(data);
-
     setState(() {
       _isUploading = true;
+      _uploadProgress = 0.0;
     });
 
     try {
-      if (_image != null) {
-        final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+      final request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+      for (int i = 0; i < _images.length; i++) {
+        if (_images[i] != null) {
+          final stream = http.ByteStream(_images[i]!.openRead());
+          final length = await _images[i]!.length();
+          final multipartFile = http.MultipartFile(
+            'files', // Ensure unique field names
+            stream,
+            length,
+            filename: path.basename(_images[i]!.path),
+          );
+          request.files.add(multipartFile);
+        }
+      }
 
-        final stream = http.ByteStream(_image!.openRead());
-        final length = await _image!.length();
+      request.fields['data'] = '{"description":"' +
+          _deskripsiController.text +
+          '", "temuan":"' +
+          _temuanController.text +
+          '","user":' +
+          jsonEncode(data['pegawai']['user']) +
+          ',"lokasi":' +
+          jsonEncode(data['pegawai']['lokasi']) +
+          '}';
 
-        final multipartFile = http.MultipartFile(
-          'file',
-          stream,
-          length,
-          filename: path.basename(_image!.path),
+      request.headers.addAll({'x-access-token': data['accessToken']});
+      var streamedResponse = await request.send();
+
+      streamedResponse.stream.listen((value) {
+        setState(() {
+          _uploadProgress += value.length / streamedResponse.contentLength!;
+        });
+      });
+
+      if (streamedResponse.statusCode == 200) {
+        //print('Uploaded successfully');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Data berhasil dikirim'),
+            behavior:
+                SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.green,
+          ),
         );
-
-        request.fields['data'] = '{"description":"' +
-            _deskripsiController.text +
-            '","user":' +
-            jsonEncode(data['pegawai']['user']) +
-            ',"lokasi":' +
-            jsonEncode(data['pegawai']['lokasi']) +
-            '}';
-        print(jsonEncode(data['pegawai']['user']));
-        //request.fields['guest_name'] = _namaController.text;
-        //request.fields['come_to'] = _tujuanController.text;
-        //request.fields['purpose'] = _keperluanController.text;
-
-        request.files.add(multipartFile);
-        request.headers.addAll({'x-access-token': data['accessToken']});
-        final response = await request.send();
-
-        final totalBytes = response.contentLength;
-        print("total bytes");
-        print(totalBytes);
-        await response.stream.listen(
-          (List<int> event) {
-            final sentBytes = event.length;
-            print('sent $sentBytes');
-            //_updateProgress(sentBytes, totalBytes!);
-          },
-          onDone: () {
-            //print(response.statusCode);
-            //print(response.request);
-
-            if (response.statusCode == 200) {
-              // Upload completed successfully
-              //Navigator.pop(context);
-              //widget.onClose();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Data berhasil dikirim'),
-                  behavior: SnackBarBehavior
-                      .floating, // Ubah lokasi menjadi di bagian atas
-                  duration: Duration(seconds: 3),
-                  backgroundColor: Colors.green,
-                ),
-              );
-              Navigator.pop(context);
-            } else {
-              // Handle API error response
-              print(response.reasonPhrase);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Data gagal dikirim'),
-                  behavior: SnackBarBehavior
-                      .floating, // Ubah lokasi menjadi di bagian atas
-                  duration: Duration(seconds: 3),
-                  backgroundColor: Colors.red,
-                ),
-              );
-            }
-
-            setState(() {
-              _isUploading = false;
-              //_uploadProgress = 0.0;
-              //_image = null;
-            });
-          },
-          onError: (error) {
-            // Handle upload error
-            // print(error);
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Terjadi Error..'),
-                behavior: SnackBarBehavior
-                    .floating, // Ubah lokasi menjadi di bagian atas
-                duration: Duration(seconds: 3),
-                backgroundColor: Colors.red,
-              ),
-            );
-            setState(() {
-              _isUploading = false;
-              //_uploadProgress = 0.0;
-              //_image = null;
-            });
-          },
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Data gagal dikirim'),
+            behavior:
+                SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
+            duration: Duration(seconds: 3),
+            backgroundColor: Colors.red,
+          ),
         );
+        //print(streamedResponse);
+        print(streamedResponse.statusCode);
+        print(streamedResponse.reasonPhrase);
+        //print('Upload failed');
       }
     } catch (e) {
-      // Menangani kesalahan yang terjadi saat mengunggah gambar
-      //print(e);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Oops.. Error terjadi..'),
+          content: Text('Terjadi error..'),
           behavior:
               SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
           duration: Duration(seconds: 3),
           backgroundColor: Colors.red,
         ),
       );
+      print('Error uploading data: $e');
+    } finally {
+      setState(() {
+        _isUploading = false;
+        _uploadProgress = 0.0;
+      });
     }
 
     //Navigator.of(context).pop();
@@ -384,13 +354,14 @@ class _FormCekBodyState extends State<FormCekBody> {
                   width: double.infinity,
                   margin: EdgeInsets.all(8.0),
                   child: ElevatedButton(
-                    onPressed: _image == null || _isUploading
-                        ? null
-                        : () {
-                            if (_formKey.currentState!.validate()) {
-                              _uploadData();
-                            }
-                          },
+                    onPressed:
+                        _images.any((image) => image == null) || _isUploading
+                            ? null
+                            : () {
+                                if (_formKey.currentState!.validate()) {
+                                  _uploadData();
+                                }
+                              },
                     style: ElevatedButton.styleFrom(
                       //backgroundColor: AppColors.secondaryColor,
                       shape: RoundedRectangleBorder(
