@@ -1,6 +1,6 @@
 {
-  "name": "kjm_app",
-  "short_name": "kjm_app",
+  "name": "kjm_security",
+  "short_name": "kjm_security",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#0175C2",

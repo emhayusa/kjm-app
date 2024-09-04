@@ -1,6 +1,6 @@
-import 'package:kjm_app/model/lokasi.dart';
-import 'package:kjm_app/model/reportType.dart';
-import 'package:kjm_app/model/reporter.dart';
+import 'package:kjm_security/model/lokasi.dart';
+import 'package:kjm_security/model/reportType.dart';
+import 'package:kjm_security/model/reporter.dart';
 
 class Laporan {
   int id;

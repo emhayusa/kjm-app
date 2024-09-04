@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:kjm_app/constant.dart';
-import 'package:kjm_app/screens/dashboard/home/top_background.dart';
-import 'package:kjm_app/widgets/custom_button_color.dart';
+import 'package:kjm_security/constant.dart';
+import 'package:kjm_security/screens/dashboard/home/top_background.dart';
+import 'package:kjm_security/widgets/custom_button_color.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:http/http.dart' as http;

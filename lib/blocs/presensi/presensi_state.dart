@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:kjm_app/model/response/presensi_response_model.dart';
+import 'package:kjm_security/model/response/presensi_response_model.dart';
 
-//import 'package:kjm_app/models/user_Presensi.dart';
+//import 'package:kjm_security/models/user_Presensi.dart';
 abstract class PresensiState extends Equatable {
   const PresensiState();
 

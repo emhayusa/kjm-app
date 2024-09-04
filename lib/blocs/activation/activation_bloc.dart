@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kjm_app/repositories/auth_repository.dart';
+import 'package:kjm_security/repositories/auth_repository.dart';
 import 'activation_event.dart';
 import 'activation_state.dart';
 

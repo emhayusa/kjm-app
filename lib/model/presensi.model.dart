@@ -1,5 +1,5 @@
-import 'package:kjm_app/model/jenisPresensi.dart';
-import 'package:kjm_app/model/reporter.dart';
+import 'package:kjm_security/model/jenisPresensi.dart';
+import 'package:kjm_security/model/reporter.dart';
 
 class Presensi {
   String uuid;

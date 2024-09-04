@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:kjm_app/model/kunjungan.dart';
+import 'package:kjm_security/model/kunjungan.dart';
 import 'package:http/http.dart' as http;
-import 'package:kjm_app/utils/image_loader.dart';
+import 'package:kjm_security/utils/image_loader.dart';
 import 'detail_kunjungan.dart';
 import 'form_kunjungan.dart';
 import 'dart:convert';

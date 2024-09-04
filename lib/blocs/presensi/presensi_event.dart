@@ -1,8 +1,8 @@
 import 'dart:io';
 
 import 'package:equatable/equatable.dart';
-import 'package:kjm_app/model/request/presensi_request_model.dart';
-//import 'package:kjm_app/models/user_Presensi.dart';
+import 'package:kjm_security/model/request/presensi_request_model.dart';
+//import 'package:kjm_security/models/user_Presensi.dart';
 
 abstract class PresensiEvent extends Equatable {
   const PresensiEvent();

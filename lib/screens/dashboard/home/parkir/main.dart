@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:kjm_app/model/parkir.model.dart';
+import 'package:kjm_security/model/parkir.model.dart';
 import 'package:http/http.dart' as http;
-import 'package:kjm_app/utils/image_loader.dart';
+import 'package:kjm_security/utils/image_loader.dart';
 import 'detail_parkir.dart';
 import 'form_parkir.dart';
 import 'dart:convert';

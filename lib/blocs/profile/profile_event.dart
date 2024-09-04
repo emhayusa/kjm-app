@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-//import 'package:kjm_app/models/user_profile.dart';
+//import 'package:kjm_security/models/user_profile.dart';
 
 abstract class ProfileEvent extends Equatable {
   const ProfileEvent();

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:kjm_app/model/cekBagasi.model.dart';
-import 'package:kjm_app/utils/image_loader.dart';
+import 'package:kjm_security/model/cekBagasi.model.dart';
+import 'package:kjm_security/utils/image_loader.dart';
 
 class DetailCekBagasi extends StatefulWidget {
   final CekBagasiModel data;

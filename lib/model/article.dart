@@ -1,4 +1,4 @@
-import 'package:kjm_app/model/user.dart';
+import 'package:kjm_security/model/user.dart';
 
 class Article {
   String uuid;

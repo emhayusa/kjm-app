@@ -1,14 +1,14 @@
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kjm_app/app.dart';
-import 'package:kjm_app/blocs/activation/activation_bloc.dart';
-import 'package:kjm_app/blocs/otp_activation/otp_activation_bloc.dart';
-import 'package:kjm_app/blocs/otp_password/otp_password_bloc.dart';
-import 'package:kjm_app/blocs/profile/profile_bloc.dart';
-import 'package:kjm_app/blocs/register/register_bloc.dart';
-import 'package:kjm_app/blocs/reset_password/reset_password_bloc.dart';
-import 'package:kjm_app/repositories/profile_repository.dart';
+import 'package:kjm_security/app.dart';
+import 'package:kjm_security/blocs/activation/activation_bloc.dart';
+import 'package:kjm_security/blocs/otp_activation/otp_activation_bloc.dart';
+import 'package:kjm_security/blocs/otp_password/otp_password_bloc.dart';
+import 'package:kjm_security/blocs/profile/profile_bloc.dart';
+import 'package:kjm_security/blocs/register/register_bloc.dart';
+import 'package:kjm_security/blocs/reset_password/reset_password_bloc.dart';
+import 'package:kjm_security/repositories/profile_repository.dart';
 import 'blocs/auth/auth_bloc.dart';
 import 'repositories/auth_repository.dart';
 

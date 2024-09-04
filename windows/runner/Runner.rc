@@ -89,13 +89,13 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "id.techlab.kjm" "\0"
-            VALUE "FileDescription", "kjm_app" "\0"
+            VALUE "CompanyName", "id.satukomando.kjm_security" "\0"
+            VALUE "FileDescription", "kjm_security" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "kjm_app" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2024 id.techlab.kjm. All rights reserved." "\0"
-            VALUE "OriginalFilename", "kjm_app.exe" "\0"
-            VALUE "ProductName", "kjm_app" "\0"
+            VALUE "InternalName", "kjm_security" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2024 id.satukomando.kjm_security. All rights reserved." "\0"
+            VALUE "OriginalFilename", "kjm_security.exe" "\0"
+            VALUE "ProductName", "kjm_security" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

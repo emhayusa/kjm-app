@@ -1,6 +1,6 @@
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="id.techlab.kjm">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="id.satukomando.kjm_security">
     <application
-        android:label="kjm_app"
+        android:label="kjm_security"
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon">
         <activity

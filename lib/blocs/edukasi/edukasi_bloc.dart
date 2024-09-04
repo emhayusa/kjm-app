@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kjm_app/model/article.dart';
-import 'package:kjm_app/repositories/edukasi_repository.dart';
+import 'package:kjm_security/model/article.dart';
+import 'package:kjm_security/repositories/edukasi_repository.dart';
 import 'edukasi_event.dart';
 import 'edukasi_state.dart';
 

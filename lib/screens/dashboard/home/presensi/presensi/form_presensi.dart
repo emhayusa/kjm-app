@@ -1,47 +1,40 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:kjm_app/main.dart';
-//import 'package:kjm_app/main.dart';
-import 'package:kjm_app/model/jenisPresensi.dart';
+import 'package:kjm_security/main.dart';
 import 'camerascreen.dart';
 import 'previewscreen.dart';
 import 'package:location/location.dart';
 import 'package:path/path.dart' as path;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FormLembur extends StatefulWidget {
+class FormPresensi extends StatefulWidget {
   final String mode;
-  const FormLembur({super.key, required this.mode});
+  const FormPresensi({super.key, required this.mode});
 
   @override
-  State<FormLembur> createState() => _FormLemburState();
+  State<FormPresensi> createState() => _FormPresensiState();
 }
 
-class _FormLemburState extends State<FormLembur> {
+class _FormPresensiState extends State<FormPresensi> {
   final _formKey = GlobalKey<FormState>();
   //String apiUrl = 'https://geoportal.big.go.id/api-dev/file/upload';
-  String apiUrlDatang = 'https://satukomando.id/api-prod/lembur/datang-new';
-  String apiUrlPulang = 'https://satukomando.id/api-prod/lembur/pulang-new';
-  String apiUrlView = 'https://satukomando.id/api-prod/jenis-presensi/';
+  String apiUrlDatang = 'https://satukomando.id/api-prod/presensi/datang-new';
+  String apiUrlPulang = 'https://satukomando.id/api-prod/presensi/pulang-new';
 
   bool _isUploading = false;
 
-  String _selectedOption1 = "";
-
-  List<JenisPresensi> datas = [];
-
-  Location _location = Location();
+  final Location _location = Location();
   late LocationData currentLocation;
   bool isLoading = true;
 
-  TextEditingController _longController = TextEditingController();
-  TextEditingController _latController = TextEditingController();
-  TextEditingController _backupController = TextEditingController();
-  TextEditingController _namaController = TextEditingController();
-  TextEditingController _lokasiController = TextEditingController();
+  final TextEditingController _longController = TextEditingController();
+  final TextEditingController _latController = TextEditingController();
 
   bool isCaptured = false;
 
@@ -51,7 +44,6 @@ class _FormLemburState extends State<FormLembur> {
   @override
   void initState() {
     super.initState();
-    //fetchData();
     _initializeLocation();
     _cameraController = CameraController(cameras[1], ResolutionPreset.medium);
     _cameraController.initialize().then((_) {
@@ -72,63 +64,6 @@ class _FormLemburState extends State<FormLembur> {
       }
     });
   }
-  /*
-  Future<void> fetchData() async {
-    setState(() {
-      isLoading = true;
-      //_uploadProgress = 0.0;
-      //_image = null;
-    });
-    try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
-      String user = prefs.getString('user') ?? '';
-      var data = jsonDecode(user);
-      //print(data['pegawai']['lokasi']['uuid']);
-      // final response = await http.get(Uri.parse('$API_PROFILE/$userId'));
-      var urlnya = apiUrlView;
-      //print(urlnya);
-      final response = await http.get(Uri.parse(urlnya),
-          headers: {"x-access-token": data['accessToken']});
-      if (response.statusCode == 200) {
-        print(response.body);
-        //print(json.decode(response.body));
-        //final parsed = jsonDecode(responseBody).cast<Map<String, dynamic>>();
-
-        //return parsed.map<Photo>((json) => Photo.fromJson(json)).toList();
-        //final List<dynamic> data = json.decode(response.body);
-        //print(data);
-        //data.map((json) => json);
-        // Create a list of model objects
-        //List<Laporan> dataList =
-        //    data.map((json) => Laporan.fromJson(json)).toList();
-
-        final List<dynamic> datanya = json.decode(response.body);
-
-        List<JenisPresensi> tamuList =
-            datanya.map((json) => JenisPresensi.fromJson(json)).toList();
-
-        // Create a list of model objects
-
-        print(tamuList.length);
-
-        //print(dataList.length);
-
-        setState(() {
-          datas = tamuList;
-          _selectedOption1 = tamuList[2].name;
-        });
-      } else {
-        print('Gagal mengambil data ');
-      }
-    } catch (e) {
-      print('Terjadi kesalahan saat mengambil data: $e');
-    }
-    setState(() {
-      isLoading = false;
-      //_uploadProgress = 0.0;
-      //_image = null;
-    });
-  }*/
 
   @override
   void dispose() {
@@ -170,40 +105,7 @@ class _FormLemburState extends State<FormLembur> {
     });
   }
 
-  Future<bool> uploadImageAndAttributes(
-      String imagePath, Map<String, dynamic> attributes) async {
-    try {
-      // API endpoint URL
-      var url = Uri.parse('https://techlab.id/api-kawal/banjir');
-
-      // Create multipart request for the image
-      var request = http.MultipartRequest('POST', url);
-
-      // Add image file to the request
-      var image = await http.MultipartFile.fromPath('file', imagePath);
-      request.files.add(image);
-
-      // Add attributes to the request
-      attributes.forEach((key, value) {
-        request.fields[key] = value.toString();
-      });
-
-      // Send the request
-      var response = await request.send();
-      print(response);
-      // Check the response status
-      if (response.statusCode == 200) {
-        return true; // Success
-      } else {
-        print('Failed to upload data: ${response.reasonPhrase}');
-        return false; // Failure
-      }
-    } catch (e) {
-      print('Exception while uploading data: $e');
-      return false; // Failure
-    }
-  }
-
+  /*
   Future<void> _uploadData() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String user = prefs.getString('user') ?? '';
@@ -215,31 +117,14 @@ class _FormLemburState extends State<FormLembur> {
     });
 
     try {
-      print(_selectedOption1);
-      List<JenisPresensi> filtered = [];
-      filtered = datas
-          .where((data) =>
-              data.name.toLowerCase().contains(_selectedOption1.toLowerCase()))
-          .toList();
-      print(filtered[0].toJson());
-      if (_selectedOption1 != 'Backup') {
-        _backupController.text = "";
-      }
       Map<String, dynamic> requestBody = {
         'data': '{"longitude":' +
             _longController.text +
             ',"latitude":' +
             _latController.text +
-            ',"namaBackup":"' +
-            _backupController.text +
-            '","jenisPresensi":' +
-            jsonEncode(filtered[0].toJson()) +
             ',"user":' +
             jsonEncode(data['pegawai']['user']) +
             '}',
-        //'user_id': userId,
-        //'password': password,
-        //'new_password': newPassword,
       };
       final response = await http.post(
           Uri.parse(widget.mode == "datang" ? apiUrlDatang : apiUrlPulang),
@@ -302,14 +187,13 @@ class _FormLemburState extends State<FormLembur> {
 
     //Navigator.of(context).pop();
   }
-
+  */
   Future<void> _uploadDataFoto() async {
     //String apiUrl = 'https://geoportal.big.go.id/api-dev/file/upload';
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String user = prefs.getString('user') ?? '';
     var data = jsonDecode(user);
-    //print(data);
 
     setState(() {
       _isUploading = true;
@@ -328,18 +212,8 @@ class _FormLemburState extends State<FormLembur> {
         length,
         filename: path.basename(image.path),
       );
-      //print(_selectedOption1);
-      request.fields['data'] = '{"longitude":' +
-          _longController.text +
-          ',"latitude":' +
-          _latController.text +
-          ',"namaBackup":"' +
-          _namaController.text +
-          '","lokasi":"' +
-          _lokasiController.text +
-          '","user":' +
-          jsonEncode(data['pegawai']['user']) +
-          '}';
+      request.fields['data'] =
+          '{"longitude":${_longController.text},"latitude":${_latController.text},"user":${jsonEncode(data['pegawai']['user'])}}';
       //print(jsonEncode(data['pegawai']['user']));
       //request.fields['guest_name'] = _namaController.text;
       //request.fields['come_to'] = _tujuanController.text;
@@ -349,17 +223,15 @@ class _FormLemburState extends State<FormLembur> {
       request.headers.addAll({'x-access-token': data['accessToken']});
       final response = await request.send();
 
-      //final totalBytes = response.contentLength;
-      //print("total bytes");
-      //print(totalBytes);
-      await response.stream.listen(
+      final totalBytes = response.contentLength;
+      response.stream.listen(
         (List<int> event) {
-          //final sentBytes = event.length;
-          // print('sent $sentBytes');
+          final sentBytes = event.length;
+          print('sent $sentBytes, $totalBytes!');
           //_updateProgress(sentBytes, totalBytes!);
         },
         onDone: () {
-          print(response.statusCode);
+          //print(response.statusCode);
           //print(response.request);
 
           if (response.statusCode == 200) {
@@ -367,7 +239,7 @@ class _FormLemburState extends State<FormLembur> {
             //Navigator.pop(context);
             //widget.onClose();
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
+              const SnackBar(
                 content: Text('Data berhasil dikirim'),
                 behavior: SnackBarBehavior
                     .floating, // Ubah lokasi menjadi di bagian atas
@@ -379,9 +251,11 @@ class _FormLemburState extends State<FormLembur> {
           } else {
             // Handle API error response
             print(response.reasonPhrase);
+            print(response.statusCode);
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Data gagal dikirim'),
+              const SnackBar(
+                content: Text(
+                    'Data gagal dikirim, pastikan Anda berada di radius yg ditetapkan'),
                 behavior: SnackBarBehavior
                     .floating, // Ubah lokasi menjadi di bagian atas
                 duration: Duration(seconds: 3),
@@ -400,7 +274,7 @@ class _FormLemburState extends State<FormLembur> {
           // Handle upload error
           // print(error);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
+            const SnackBar(
               content: Text('Terjadi Error..'),
               behavior: SnackBarBehavior
                   .floating, // Ubah lokasi menjadi di bagian atas
@@ -419,7 +293,7 @@ class _FormLemburState extends State<FormLembur> {
       // Menangani kesalahan yang terjadi saat mengunggah gambar
       //print(e);
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('Oops.. Error terjadi..'),
           behavior:
               SnackBarBehavior.floating, // Ubah lokasi menjadi di bagian atas
@@ -432,6 +306,20 @@ class _FormLemburState extends State<FormLembur> {
     //Navigator.of(context).pop();
   }
 
+  Future<File> _compressImage(File file) async {
+    //final dir = await getTemporaryDirectory();
+    //final targetPath = dir.absolute.path + "/temp.jpg";
+
+    //var result = await FlutterImageCompress.compressAndGetFile(
+    //  file.absolute.path,
+    //  targetPath,
+    //  quality: 70,
+    //);
+
+    //return result!;
+    return file;
+  }
+
   @override
   Widget build(BuildContext context) {
     String mode = widget.mode == "datang" ? "Datang" : "Pulang";
@@ -439,7 +327,7 @@ class _FormLemburState extends State<FormLembur> {
     //double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Form Isian Lembur ${mode}'),
+        title: Text('Form Isian Presensi $mode'),
         centerTitle: true,
       ),
       body: Padding(
@@ -474,37 +362,12 @@ class _FormLemburState extends State<FormLembur> {
                 TextFormField(
                   controller: _latController,
                   readOnly: true,
-                  decoration: InputDecoration(
+                  decoration: const InputDecoration(
                     labelText: 'Latitude',
                   ),
                   validator: (value) {
                     if (value!.isEmpty) {
                       return 'Masukkan Latitude';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 10),
-                TextFormField(
-                  controller: _namaController,
-                  decoration: InputDecoration(
-                    labelText: 'Nama yang digantikan',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Masukkan Nama yang digantikan';
-                    }
-                    return null;
-                  },
-                ),
-                TextFormField(
-                  controller: _lokasiController,
-                  decoration: InputDecoration(
-                    labelText: 'Lokasi',
-                  ),
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Masukkan Lokasi';
                     }
                     return null;
                   },
@@ -517,36 +380,33 @@ class _FormLemburState extends State<FormLembur> {
                     onPressed: isCaptured
                         ? null
                         : () async {
-                            if (_formKey.currentState!.validate()) {
-                              print("capture");
-                              if (!_cameraController.value.isInitialized) {
-                                return;
-                              }
-                              if (_cameraController.value.isTakingPicture) {
-                                return;
-                              }
+                            if (!_cameraController.value.isInitialized) {
+                              return;
+                            }
+                            if (_cameraController.value.isTakingPicture) {
+                              return;
+                            }
 
-                              try {
-                                await _cameraController
-                                    .setFlashMode(FlashMode.auto);
-                                XFile picture =
-                                    await _cameraController.takePicture();
-                                //print(picture);
-                                setState(() {
-                                  image = picture;
-                                  isCaptured = true;
-                                });
+                            try {
+                              await _cameraController
+                                  .setFlashMode(FlashMode.auto);
+                              XFile picture =
+                                  await _cameraController.takePicture();
+                              //print(picture);
+                              setState(() {
+                                image = picture;
+                                isCaptured = true;
+                              });
 
-                                //Navigator.push(
-                                //    context,
-                                //    MaterialPageRoute(
-                                //        builder: (context) =>
-                                //            GalleryView(
-                                //                file: picture)));
-                              } on CameraException catch (e) {
-                                debugPrint('Something went wrong! $e');
-                                return;
-                              }
+                              //Navigator.push(
+                              //    context,
+                              //    MaterialPageRoute(
+                              //        builder: (context) =>
+                              //            GalleryView(
+                              //                file: picture)));
+                            } on CameraException catch (e) {
+                              debugPrint('Something went wrong! $e');
+                              return;
                             }
                           },
                     style: ElevatedButton.styleFrom(
@@ -576,7 +436,8 @@ class _FormLemburState extends State<FormLembur> {
                       ),
                       padding: const EdgeInsets.all(20),
                     ),
-                    child: Text(_isUploading ? 'Processing..' : 'Kirim Lembur'),
+                    child:
+                        Text(_isUploading ? 'Processing..' : 'Kirim Presensi'),
                   ),
                 ),
               ],

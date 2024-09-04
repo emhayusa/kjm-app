@@ -1,4 +1,5 @@
 class Lembur {
+  int id;
   String uuid;
   DateTime tanggal;
   String longDatang;
@@ -7,12 +8,15 @@ class Lembur {
   dynamic longPulang;
   dynamic latPulang;
   DateTime? waktuPulang;
-  String namaBackup;
+  String? keteranganLembur;
   String lokasi;
+  dynamic namaBackup;
+  dynamic alasanBackup;
   DateTime createdAt;
   User user;
 
   Lembur({
+    required this.id,
     required this.uuid,
     required this.tanggal,
     required this.longDatang,
@@ -21,13 +25,16 @@ class Lembur {
     required this.longPulang,
     required this.latPulang,
     this.waktuPulang,
-    required this.namaBackup,
+    this.keteranganLembur,
     required this.lokasi,
+    required this.namaBackup,
+    required this.alasanBackup,
     required this.createdAt,
     required this.user,
   });
 
   factory Lembur.fromJson(Map<String, dynamic> json) => Lembur(
+        id: json["id"],
         uuid: json["uuid"],
         tanggal: DateTime.parse(json["tanggal"]),
         longDatang: json["longDatang"],
@@ -38,13 +45,16 @@ class Lembur {
         waktuPulang: json["waktuPulang"] == null
             ? null
             : DateTime.parse(json["waktuPulang"]),
-        namaBackup: json["namaBackup"],
+        keteranganLembur: json["keteranganLembur"] ?? "",
         lokasi: json["lokasi"],
+        namaBackup: json["namaBackup"],
+        alasanBackup: json["alasanBackup"],
         createdAt: DateTime.parse(json["createdAt"]),
         user: User.fromJson(json["user"]),
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "uuid": uuid,
         "tanggal":
             "${tanggal.year.toString().padLeft(4, '0')}-${tanggal.month.toString().padLeft(2, '0')}-${tanggal.day.toString().padLeft(2, '0')}",
@@ -53,9 +63,11 @@ class Lembur {
         "waktuDatang": waktuDatang.toIso8601String(),
         "longPulang": longPulang,
         "latPulang": latPulang,
-        "waktuPulang": waktuPulang?.toIso8601String(),
-        "namaBackup": namaBackup,
+        "waktuPulang": waktuPulang,
+        "keteranganLembur": keteranganLembur,
         "lokasi": lokasi,
+        "namaBackup": namaBackup,
+        "alasanBackup": alasanBackup,
         "createdAt": createdAt.toIso8601String(),
         "user": user.toJson(),
       };

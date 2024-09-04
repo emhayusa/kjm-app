@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:kjm_app/model/article.dart';
+import 'package:kjm_security/model/article.dart';
 
 abstract class EdukasiState extends Equatable {
   const EdukasiState();

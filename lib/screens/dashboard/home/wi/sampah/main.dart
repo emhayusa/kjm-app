@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:kjm_app/model/cekSampah.model.dart';
-import 'package:kjm_app/utils/image_loader.dart';
+import 'package:kjm_security/model/cekSampah.model.dart';
+import 'package:kjm_security/utils/image_loader.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 

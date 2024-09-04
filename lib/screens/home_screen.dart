@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kjm_app/blocs/auth/auth_bloc.dart';
-import 'package:kjm_app/blocs/auth/auth_state.dart';
-import 'package:kjm_app/screens/dashboard/home/home_page.dart';
-import 'package:kjm_app/screens/dashboard/password/passwordscreen.dart';
-import 'package:kjm_app/screens/login_screen.dart';
-import 'package:kjm_app/widgets/custom_snackbar.dart';
+import 'package:kjm_security/blocs/auth/auth_bloc.dart';
+import 'package:kjm_security/blocs/auth/auth_state.dart';
+import 'package:kjm_security/screens/dashboard/home/home_page.dart';
+import 'package:kjm_security/screens/dashboard/password/passwordscreen.dart';
+import 'package:kjm_security/screens/login_screen.dart';
+import 'package:kjm_security/widgets/custom_snackbar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {

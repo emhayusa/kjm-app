@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:kjm_app/screens/splash_screen.dart';
+import 'package:kjm_security/screens/splash_screen.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
 
@@ -9,7 +9,7 @@ class MyAppView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'KJM',
+      title: 'KJM Security',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),

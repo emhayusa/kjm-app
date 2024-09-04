@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:kjm_app/model/Reportan.dart';
+import 'package:kjm_security/model/Reportan.dart';
 import 'package:http/http.dart' as http;
-import 'package:kjm_app/utils/image_loader.dart';
+import 'package:kjm_security/utils/image_loader.dart';
 //import 'form_kejadian_penanganan.dart';
 import 'detail_kejadian.dart';
 import 'form_kejadian.dart';

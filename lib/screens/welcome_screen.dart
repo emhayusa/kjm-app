@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:in_app_update/in_app_update.dart';
-import 'package:kjm_app/widgets/custom_button.dart';
-import 'package:kjm_app/widgets/custom_button_nofill.dart';
+import 'package:kjm_security/widgets/custom_button.dart';
+import 'package:kjm_security/widgets/custom_button_nofill.dart';
 
 class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});

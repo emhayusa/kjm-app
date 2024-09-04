@@ -1,7 +1,7 @@
-import 'package:kjm_app/model/jenisKunjungan.dart';
-import 'package:kjm_app/model/jenisSatuan.dart';
-import 'package:kjm_app/model/lokasi.dart';
-import 'package:kjm_app/model/reporter.dart';
+import 'package:kjm_security/model/jenisKunjungan.dart';
+import 'package:kjm_security/model/jenisSatuan.dart';
+import 'package:kjm_security/model/lokasi.dart';
+import 'package:kjm_security/model/reporter.dart';
 
 class KunjunganModel {
   int id;

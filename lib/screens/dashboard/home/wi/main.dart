@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:kjm_app/screens/dashboard/home/wi/bagasi/main.dart';
-import 'package:kjm_app/screens/dashboard/home/wi/body/main.dart';
-import 'package:kjm_app/screens/dashboard/home/wi/inbound/main.dart';
-import 'package:kjm_app/screens/dashboard/home/wi/linehaul/main.dart';
-import 'package:kjm_app/screens/dashboard/home/wi/loker/main.dart';
-import 'package:kjm_app/screens/dashboard/home/wi/outbound/main.dart';
-import 'package:kjm_app/screens/dashboard/home/wi/sampah/main.dart';
+import 'package:kjm_security/screens/dashboard/home/wi/bagasi/main.dart';
+import 'package:kjm_security/screens/dashboard/home/wi/body/main.dart';
+import 'package:kjm_security/screens/dashboard/home/wi/inbound/main.dart';
+import 'package:kjm_security/screens/dashboard/home/wi/linehaul/main.dart';
+import 'package:kjm_security/screens/dashboard/home/wi/loker/main.dart';
+import 'package:kjm_security/screens/dashboard/home/wi/outbound/main.dart';
+import 'package:kjm_security/screens/dashboard/home/wi/sampah/main.dart';
 
 class WorkingInstruction extends StatefulWidget {
   const WorkingInstruction({super.key});

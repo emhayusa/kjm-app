@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:kjm_app/model/kunjungan.dart';
-import 'package:kjm_app/utils/image_loader.dart';
+import 'package:kjm_security/model/kunjungan.dart';
+import 'package:kjm_security/utils/image_loader.dart';
 
 class DetailKunjungan extends StatefulWidget {
   final KunjunganModel kunjungan;

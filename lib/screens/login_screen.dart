@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:in_app_update/in_app_update.dart';
-import 'package:kjm_app/widgets/custom_snackbar.dart';
+import 'package:kjm_security/widgets/custom_snackbar.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../blocs/auth/auth_bloc.dart';

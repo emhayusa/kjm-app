@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kjm_app/widgets/custom_button.dart';
-import 'package:kjm_app/widgets/custom_snackbar.dart';
+import 'package:kjm_security/widgets/custom_button.dart';
+import 'package:kjm_security/widgets/custom_snackbar.dart';
 import '../blocs/activation/activation_bloc.dart';
 import '../blocs/activation/activation_event.dart';
 import '../blocs/activation/activation_state.dart';

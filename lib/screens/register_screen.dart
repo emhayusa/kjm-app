@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kjm_app/widgets/custom_snackbar.dart';
+import 'package:kjm_security/widgets/custom_snackbar.dart';
 import '../blocs/register/register_bloc.dart';
 import '../blocs/register/register_event.dart';
 import '../blocs/register/register_state.dart';

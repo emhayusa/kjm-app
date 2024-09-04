@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kjm_app/blocs/profile/profile_bloc.dart';
-import 'package:kjm_app/blocs/profile/profile_event.dart';
-import 'package:kjm_app/blocs/profile/profile_state.dart';
+import 'package:kjm_security/blocs/profile/profile_bloc.dart';
+import 'package:kjm_security/blocs/profile/profile_event.dart';
+import 'package:kjm_security/blocs/profile/profile_state.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({Key? key}) : super(key: key);

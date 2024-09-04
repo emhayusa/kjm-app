@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
-import 'package:kjm_app/model/cekBody.model.dart';
-import 'package:kjm_app/utils/image_loader.dart';
+import 'package:kjm_security/model/cekBody.model.dart';
+import 'package:kjm_security/utils/image_loader.dart';
 import 'detail_cek_body.dart';
 import 'form_cek_body.dart';
 import 'dart:convert';

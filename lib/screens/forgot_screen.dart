@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kjm_app/blocs/otp_password/otp_password_bloc.dart';
-import 'package:kjm_app/blocs/otp_password/otp_password_event.dart';
-import 'package:kjm_app/blocs/otp_password/otp_password_state.dart';
-import 'package:kjm_app/widgets/custom_button.dart';
-import 'package:kjm_app/widgets/custom_snackbar.dart';
+import 'package:kjm_security/blocs/otp_password/otp_password_bloc.dart';
+import 'package:kjm_security/blocs/otp_password/otp_password_event.dart';
+import 'package:kjm_security/blocs/otp_password/otp_password_state.dart';
+import 'package:kjm_security/widgets/custom_button.dart';
+import 'package:kjm_security/widgets/custom_snackbar.dart';
 
 class ForgotScreen extends StatefulWidget {
   const ForgotScreen({super.key});

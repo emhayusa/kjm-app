@@ -1,6 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-//import 'package:kjm_app/models/user_profile.dart';
-import 'package:kjm_app/repositories/profile_repository.dart';
+//import 'package:kjm_security/models/user_profile.dart';
+import 'package:kjm_security/repositories/profile_repository.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:kjm_app/model/response/presensi_response_model.dart';
-//import 'package:kjm_app/models/user_profile.dart';
-import 'package:kjm_app/repositories/presensi_repository.dart';
+import 'package:kjm_security/model/response/presensi_response_model.dart';
+//import 'package:kjm_security/models/user_profile.dart';
+import 'package:kjm_security/repositories/presensi_repository.dart';
 import 'presensi_event.dart';
 import 'presensi_state.dart';
 

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:kjm_app/screens/dashboard/home/buku_tamu/main.dart';
-import 'package:kjm_app/screens/dashboard/home/clock.dart';
-import 'package:kjm_app/screens/dashboard/home/greeting.dart';
-import 'package:kjm_app/screens/dashboard/home/item_kategori.dart';
-import 'package:kjm_app/screens/dashboard/home/kunjungan/main.dart';
-import 'package:kjm_app/screens/dashboard/home/laporan/main.dart';
-import 'package:kjm_app/screens/dashboard/home/lembur/main.dart';
-import 'package:kjm_app/screens/dashboard/home/paket/main.dart';
-import 'package:kjm_app/screens/dashboard/home/parkir/main.dart';
-import 'package:kjm_app/screens/dashboard/home/patroli/main.dart';
-import 'package:kjm_app/screens/dashboard/home/presensi/main.dart';
-import 'package:kjm_app/screens/dashboard/home/top_background.dart';
-import 'package:kjm_app/screens/dashboard/home/wi/main.dart';
+import 'package:kjm_security/screens/dashboard/home/buku_tamu/main.dart';
+import 'package:kjm_security/screens/dashboard/home/clock.dart';
+import 'package:kjm_security/screens/dashboard/home/greeting.dart';
+import 'package:kjm_security/screens/dashboard/home/item_kategori.dart';
+import 'package:kjm_security/screens/dashboard/home/kunjungan/main.dart';
+import 'package:kjm_security/screens/dashboard/home/laporan/main.dart';
+import 'package:kjm_security/screens/dashboard/home/lembur/main.dart';
+import 'package:kjm_security/screens/dashboard/home/paket/main.dart';
+import 'package:kjm_security/screens/dashboard/home/parkir/main.dart';
+import 'package:kjm_security/screens/dashboard/home/patroli/main.dart';
+import 'package:kjm_security/screens/dashboard/home/presensi/main.dart';
+import 'package:kjm_security/screens/dashboard/home/top_background.dart';
+import 'package:kjm_security/screens/dashboard/home/wi/main.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -81,7 +81,7 @@ class HomePage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MainKehadiran()),
+                                  builder: (context) => PresensiMenu()),
                             );
                           },
                           child: ItemKategori(
@@ -94,7 +94,7 @@ class HomePage extends StatelessWidget {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => MainLembur()),
+                                  builder: (context) => LemburMenu()),
                             );
                           },
                           child: ItemKategori(

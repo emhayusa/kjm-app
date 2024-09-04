@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:kjm_app/model/bukutamu.dart';
-import 'package:kjm_app/utils/image_loader.dart';
+import 'package:kjm_security/model/bukutamu.dart';
+import 'package:kjm_security/utils/image_loader.dart';
 import 'detail_tamu.dart';
 import 'form_tamu.dart';
 import 'package:http/http.dart' as http;
